@@ -1,0 +1,646 @@
+[
+    {
+        "id": "360a8af4.c42cb6",
+        "type": "visual-recognition-v3",
+        "z": "70fef79.6464008",
+        "name": "Visual Recognition",
+        "apikey": "__PWRD__",
+        "image-feature": "classifyImage",
+        "lang": "en",
+        "x": 470,
+        "y": 360,
+        "wires": [
+            [
+                "47bbe109.2039",
+                "10049006.405e1"
+            ]
+        ]
+    },
+    {
+        "id": "74d108a8.a60de8",
+        "type": "inject",
+        "z": "70fef79.6464008",
+        "name": "Test Threat",
+        "topic": "",
+        "payload": "https://vignette.wikia.nocookie.net/thebill/images/c/c2/Dashwood_held_hostage.png/revision/latest?cb=20100718234132",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 100,
+        "y": 300,
+        "wires": [
+            [
+                "3d290668.eaec2a"
+            ]
+        ]
+    },
+    {
+        "id": "47bbe109.2039",
+        "type": "debug",
+        "z": "70fef79.6464008",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "result",
+        "x": 670,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "3d290668.eaec2a",
+        "type": "function",
+        "z": "70fef79.6464008",
+        "name": "security",
+        "func": "msg.params={\"classifier_ids\":[\"DefaultCustomModel_992034364\"], \"threshold\":0};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 280,
+        "y": 360,
+        "wires": [
+            [
+                "360a8af4.c42cb6"
+            ]
+        ]
+    },
+    {
+        "id": "bb848d6.1f8f27",
+        "type": "switch",
+        "z": "70fef79.6464008",
+        "name": "check for threat",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "threat",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "safe",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 429,
+        "y": 558,
+        "wires": [
+            [
+                "4f453e06.8591d",
+                "b723ff1f.076bf",
+                "3d4ecfeb.5a114"
+            ],
+            [
+                "b7ad90de.06e47",
+                "3d4ecfeb.5a114"
+            ]
+        ]
+    },
+    {
+        "id": "c77f460.d7d10b8",
+        "type": "wiotp out",
+        "z": "70fef79.6464008",
+        "authType": "d",
+        "qs": "false",
+        "qsDeviceId": "",
+        "deviceKey": "e0515aca.141c98",
+        "deviceType": "",
+        "deviceId": "",
+        "event": "event",
+        "format": "json",
+        "qos": "",
+        "name": "send to cloud",
+        "x": 880,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "253b370f.8d2ad8",
+        "type": "e-mail",
+        "z": "70fef79.6464008",
+        "server": "smtp.gmail.com",
+        "port": "465",
+        "secure": true,
+        "name": "IoTgr09@gmail.com",
+        "dname": "send email",
+        "x": 839,
+        "y": 498,
+        "wires": []
+    },
+    {
+        "id": "4f453e06.8591d",
+        "type": "function",
+        "z": "70fef79.6464008",
+        "name": "Threat Message",
+        "func": "\nmsg.payload = \"Threat Detected!\" \n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 669,
+        "y": 618,
+        "wires": [
+            [
+                "21c792b.0d3a26e"
+            ]
+        ]
+    },
+    {
+        "id": "e1849f8d.2fba7",
+        "type": "cloudant out",
+        "z": "70fef79.6464008",
+        "name": "store in db",
+        "cloudant": "7c70f260.fc478c",
+        "database": "security-images",
+        "service": "_ext_",
+        "payonly": false,
+        "operation": "insert",
+        "x": 870,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "f697008.a3af4",
+        "type": "ibmiot in",
+        "z": "70fef79.6464008",
+        "authentication": "apiKey",
+        "apiKey": "1b598753.cc7d69",
+        "inputType": "evt",
+        "logicalInterface": "",
+        "ruleId": "",
+        "deviceId": "",
+        "applicationId": "",
+        "deviceType": "+",
+        "eventType": "+",
+        "commandType": "",
+        "format": "json",
+        "name": "IBM IoT",
+        "service": "registered",
+        "allDevices": true,
+        "allApplications": "",
+        "allDeviceTypes": true,
+        "allLogicalInterfaces": "",
+        "allEvents": true,
+        "allCommands": "",
+        "allFormats": "",
+        "qos": 0,
+        "x": 70,
+        "y": 558,
+        "wires": [
+            [
+                "4b47aa1f.272204"
+            ]
+        ]
+    },
+    {
+        "id": "4b47aa1f.272204",
+        "type": "function",
+        "z": "70fef79.6464008",
+        "name": "return payload",
+        "func": "return {payload:msg.payload.d.value};",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 220,
+        "y": 558,
+        "wires": [
+            [
+                "bb848d6.1f8f27",
+                "b94a4049.fe2e4"
+            ]
+        ]
+    },
+    {
+        "id": "b94a4049.fe2e4",
+        "type": "debug",
+        "z": "70fef79.6464008",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 430,
+        "y": 498,
+        "wires": []
+    },
+    {
+        "id": "896f9674.c619d8",
+        "type": "inject",
+        "z": "70fef79.6464008",
+        "name": "Test Safe",
+        "topic": "",
+        "payload": "http://fasterskier.com/wp-content/blogs.dir/1/files/2014/01/Dad-Kenzie-and-I-on-a-family-ski-with-Mom-behind-the-camera-I-feel-so-lucky-to-have-grown-up-skiing-and-having-fun-outdoors.jpg",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 100,
+        "y": 420,
+        "wires": [
+            [
+                "3d290668.eaec2a"
+            ]
+        ]
+    },
+    {
+        "id": "10049006.405e1",
+        "type": "function",
+        "z": "70fef79.6464008",
+        "name": "classify",
+        "func": "if (msg.result.images[0].classifiers[0].classes[1].score > 0.5){\n msg.payload=\"threat\";\n}\nelse if (msg.result.images[0].classifiers[0].classes[0].score > 0.5){\n    msg.payload=\"safe\";\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 680,
+        "y": 360,
+        "wires": [
+            [
+                "c77f460.d7d10b8",
+                "e1849f8d.2fba7"
+            ]
+        ]
+    },
+    {
+        "id": "86680472.664a48",
+        "type": "rpi-gpio in",
+        "z": "70fef79.6464008",
+        "name": "PIR_sensor",
+        "pin": "7",
+        "intype": "tri",
+        "debounce": "25",
+        "read": true,
+        "x": 90,
+        "y": 110,
+        "wires": [
+            [
+                "1f3d64e5.4e521b",
+                "46af8899.8e8db8"
+            ]
+        ]
+    },
+    {
+        "id": "1f3d64e5.4e521b",
+        "type": "debug",
+        "z": "70fef79.6464008",
+        "name": "PIR debug",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 250,
+        "y": 70,
+        "wires": []
+    },
+    {
+        "id": "46af8899.8e8db8",
+        "type": "switch",
+        "z": "70fef79.6464008",
+        "name": "switch",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "1",
+                "vt": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 250,
+        "y": 110,
+        "wires": [
+            [
+                "5bd99a4d.b64784",
+                "eba3b3bb.efa75"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "5041b447.69ec4c",
+        "type": "file in",
+        "z": "70fef79.6464008",
+        "name": "save photo",
+        "filename": "/home/pi/Desktop/project/images/photo1.JPEG",
+        "format": "",
+        "chunk": false,
+        "sendError": false,
+        "x": 670,
+        "y": 120,
+        "wires": [
+            [
+                "cdd9dbaa.43d2b8"
+            ]
+        ]
+    },
+    {
+        "id": "cdd9dbaa.43d2b8",
+        "type": "function",
+        "z": "70fef79.6464008",
+        "name": "Read JPEG File",
+        "func": "msg.headers = {\n \"Content-Type\":\"image/jpeg\"\n}\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 840,
+        "y": 120,
+        "wires": [
+            [
+                "3d290668.eaec2a"
+            ]
+        ]
+    },
+    {
+        "id": "325ab78a.b31438",
+        "type": "grove analog sensor",
+        "z": "70fef79.6464008",
+        "name": "Sound Sensor",
+        "pin": "0",
+        "sensor": "sound",
+        "repeat": "1",
+        "board": "fa898750.d8d258",
+        "x": 90,
+        "y": 170,
+        "wires": [
+            [
+                "c1974a3b.017158",
+                "d54eac17.77cfd"
+            ]
+        ]
+    },
+    {
+        "id": "c1974a3b.017158",
+        "type": "debug",
+        "z": "70fef79.6464008",
+        "name": "sound debug",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 250,
+        "y": 210,
+        "wires": []
+    },
+    {
+        "id": "d54eac17.77cfd",
+        "type": "switch",
+        "z": "70fef79.6464008",
+        "name": "switch",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "gt",
+                "v": "300",
+                "vt": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 250,
+        "y": 170,
+        "wires": [
+            [
+                "a6474b84.18c198",
+                "eba3b3bb.efa75"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "eba3b3bb.efa75",
+        "type": "camerapi-takephoto",
+        "z": "70fef79.6464008",
+        "filemode": "1",
+        "filename": "photo1.JPEG",
+        "filedefpath": "0",
+        "filepath": "/home/pi/Desktop/project/images/",
+        "fileformat": "jpeg",
+        "resolution": "1",
+        "rotation": "0",
+        "fliph": "1",
+        "flipv": "0",
+        "brightness": "50",
+        "contrast": "0",
+        "sharpness": "0",
+        "imageeffect": "none",
+        "name": "Take Photo",
+        "x": 491,
+        "y": 120,
+        "wires": [
+            [
+                "5041b447.69ec4c"
+            ]
+        ]
+    },
+    {
+        "id": "3d4ecfeb.5a114",
+        "type": "ui_template",
+        "z": "70fef79.6464008",
+        "group": "c93a6ab6.8d9c28",
+        "name": "Show Picture",
+        "order": 0,
+        "width": "5",
+        "height": "4",
+        "format": "<script>\nvar value = \"1\";\n// or overwrite value in your callback function ...\nthis.scope.action = function() { return value; }\n\nsetInterval(function() {\n    var source = '/photo1.JPEG',\n    timestamp = (new Date()).getTime(),\n    newUrl = source + '?_=' + timestamp;\n    document.getElementById(\"photo\").src = newUrl;\n    //document.getElementById('photo').innerHTML = '<img src=' + newUrl + '\">';\n    \n}, 1000);\n</script>\n\n<div style=\"margin-bottom:10px;\" >\n <img src=\"/photo1.JPEG\" id=\"photo\" width=\"100%\" height=\"100%\">\n</div>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "templateScope": "local",
+        "x": 659,
+        "y": 558,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "21c792b.0d3a26e",
+        "type": "ui_text",
+        "z": "70fef79.6464008",
+        "group": "c93a6ab6.8d9c28",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "name": "display classification",
+        "label": "",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "x": 889,
+        "y": 658,
+        "wires": []
+    },
+    {
+        "id": "b7ad90de.06e47",
+        "type": "function",
+        "z": "70fef79.6464008",
+        "name": "Safe Message",
+        "func": "msg.payload= \"Everything is safe.\" \n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 669,
+        "y": 698,
+        "wires": [
+            [
+                "21c792b.0d3a26e"
+            ]
+        ]
+    },
+    {
+        "id": "b723ff1f.076bf",
+        "type": "function",
+        "z": "70fef79.6464008",
+        "name": "Threat Email",
+        "func": "var time = new Date().toString();\nmsg.topic = \"New Threat Detected\";\nmsg.payload = time + \": Threat Detected at Camera 1!\" ;\nmsg.attachments = {\n    filename: \"photo1.JPEG\",\n    path: \"/home/pi/Desktop/project/images/photo1.JPEG\",\n    content: msg.payload\n    \n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 659,
+        "y": 498,
+        "wires": [
+            [
+                "253b370f.8d2ad8"
+            ]
+        ]
+    },
+    {
+        "id": "9725e341.49954",
+        "type": "ui_text",
+        "z": "70fef79.6464008",
+        "group": "fa90e9fa.45c538",
+        "order": 0,
+        "width": "5",
+        "height": "2",
+        "name": "display",
+        "label": "",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "x": 680,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "5bd99a4d.b64784",
+        "type": "function",
+        "z": "70fef79.6464008",
+        "name": "motion message",
+        "func": "var d = new Date()\n\n\n\nmsg.payload = \"Motion Detected <br/>\" + d\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 500,
+        "y": 60,
+        "wires": [
+            [
+                "9725e341.49954"
+            ]
+        ]
+    },
+    {
+        "id": "ca8dbc14.cea82",
+        "type": "ui_text",
+        "z": "70fef79.6464008",
+        "group": "fa90e9fa.45c538",
+        "order": 0,
+        "width": "5",
+        "height": "2",
+        "name": "display",
+        "label": "",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "x": 680,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "a6474b84.18c198",
+        "type": "function",
+        "z": "70fef79.6464008",
+        "name": "sound message",
+        "func": "var d = new Date()\n\nmsg.payload = \"Loud Noise Detected <br/>\" + d \n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 500,
+        "y": 180,
+        "wires": [
+            [
+                "ca8dbc14.cea82"
+            ]
+        ]
+    },
+    {
+        "id": "e0515aca.141c98",
+        "type": "wiotp-credentials",
+        "z": "",
+        "name": "send to cloud",
+        "org": "v8m3h2",
+        "serverName": "",
+        "devType": "camerapi",
+        "devId": "camera1",
+        "keepalive": "60",
+        "cleansession": true,
+        "tls": "",
+        "usetls": false
+    },
+    {
+        "id": "7c70f260.fc478c",
+        "type": "cloudant",
+        "z": "",
+        "host": "https://d3298af0-7c6a-4985-a22a-6719d6adf1bb-bluemix.cloudant.com/",
+        "name": "securityDatabase"
+    },
+    {
+        "id": "1b598753.cc7d69",
+        "type": "ibmiot",
+        "z": "",
+        "name": "camera1",
+        "keepalive": "60",
+        "serverName": "",
+        "cleansession": true,
+        "appId": "",
+        "shared": false
+    },
+    {
+        "id": "fa898750.d8d258",
+        "type": "board-config",
+        "z": "",
+        "board": "GrovePi"
+    },
+    {
+        "id": "c93a6ab6.8d9c28",
+        "type": "ui_group",
+        "z": "",
+        "name": "Camera1",
+        "tab": "18107076.27625",
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "fa90e9fa.45c538",
+        "type": "ui_group",
+        "z": "",
+        "name": "Sensors",
+        "tab": "18107076.27625",
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "18107076.27625",
+        "type": "ui_tab",
+        "z": "",
+        "name": "Home",
+        "icon": "dashboard"
+    }
+]
