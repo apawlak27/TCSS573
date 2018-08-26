@@ -1,6 +1,4 @@
 # Public Safety Surveillance System
-### TCSS 573 - Group 9
-### Sonal Goswami & Alex Pawlak
 
 
 For our project we have designed and implemented a security system built on a Raspberry Pi with GrovePi+. The security systems uses an attached motion sensor, sound sensor, and camerapi as the hardware devices. The system is built on Node-Red and integrated with IBM Watson. A Node-Red Dashboard is also used for monitoring purposes. The system monitors for motion and sound and updates the dashboard in real-time.
