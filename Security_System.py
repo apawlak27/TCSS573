@@ -15,8 +15,8 @@ pinMode(sound, 'INPUT')
 
 # IBM Watson Visual Recognition Connection
 visual_recognition = VisualRecognitionV3(
-	version = '2018-03-19',
-	api_key = '18d4c1e894c94a600bce36b0aab3b6c17ee14a1f'
+	version='2018-03-19',
+	api_key='18d4c1e894c94a600bce36b0aab3b6c17ee14a1f'
 )
 
 
